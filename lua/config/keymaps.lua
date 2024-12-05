@@ -3,8 +3,27 @@
 -- Add any additional keymaps here
 --
 --
+
+local function increase_ids()
+  local buf = vim.api.nvim_get_current_buf()
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  local updated_lines = {}
+
+  for i, line in ipairs(lines) do
+    local updated_line = line:gsub("%[0%]", function()
+      return "[" .. i - 1 .. "]"
+    end)
+    table.insert(updated_lines, updated_line)
+  end
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, updated_lines)
+end
+
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>nn", function()
+  increase_ids()
+end)
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
